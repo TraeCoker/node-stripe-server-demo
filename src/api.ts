@@ -30,10 +30,11 @@ function runAsync(callback: Function){
  * Checkouts
  */
 app.post(
-    '/checkouts/', async ({ body }: Request, res: Response) => {
+    '/checkouts/',
+    runAsync( async ({ body }: Request, res: Response) => {
         res.send(
 
             await createStripeChekoutSession(body.line_items)
         );
-    }
+    })
 );
