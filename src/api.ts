@@ -1,9 +1,12 @@
-import express, {Request, Response, NextFunction} from 'express';
+import express, {Request, Response, NextFunction, request} from 'express';
 export const app = express();
 
 app.use( express.json() )
 
 import cors from 'cors';
+import { createStripeChekoutSession } from './checkout';
+
+
 app.use(cors({origin: true}))
 
 app.post('/test', (req: Request, resp: Response) =>{
@@ -11,3 +14,15 @@ app.post('/test', (req: Request, resp: Response) =>{
 
         resp.status(200).send({with_tax: amount * 7})
 })
+
+/**
+ * Checkouts
+ */
+app.post(
+    '/checkouts/', async ({ body }: Request, res: Response) => {
+        res.send(
+
+            await createStripeChekoutSession(body.line_items)
+        );
+    }
+);
