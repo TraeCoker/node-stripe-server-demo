@@ -5,6 +5,7 @@ app.use( express.json() )
 
 import cors from 'cors';
 import { createStripeChekoutSession } from './checkout';
+import { createPaymentIntent } from './payments';
 
 
 app.use(cors({origin: true}))
@@ -36,5 +37,17 @@ app.post(
 
             await createStripeChekoutSession(body.line_items)
         );
+    })
+);
+
+/**
+ * Payment Intents
+ */
+app.post(
+    '/payments',
+    runAsync (async ( { body }: Request, res: Response) => {
+       res.send(
+            await createPaymentIntent(body.amount)
+       );
     })
 );
