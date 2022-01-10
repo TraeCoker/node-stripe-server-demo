@@ -16,6 +16,17 @@ app.post('/test', (req: Request, resp: Response) =>{
 })
 
 /**
+ * Catch async errors when awaiting promises 
+ */
+
+function runAsync(callback: Function){
+    return (req: Request, res: Response, next: NextFunction) => {
+        callback(req, res, next).catch(next);
+    };
+};
+
+
+/**
  * Checkouts
  */
 app.post(
