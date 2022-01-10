@@ -7,8 +7,17 @@ import cors from 'cors';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
 
+///Middleware///
 
+//Allows cross origin requests
 app.use(cors({origin: true}))
+
+//Sets rawBody property for webhook handling
+app.use(
+    express.json({
+        verify: (req, res, buffer) => (req['rawBody'] = buffer);
+    })
+);
 
 app.post('/test', (req: Request, resp: Response) =>{
         const amount = req.body.amount;
