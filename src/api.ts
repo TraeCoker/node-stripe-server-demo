@@ -1,4 +1,4 @@
-import express, {Request, Response, NextFunction, request} from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 export const app = express();
 
 app.use( express.json() )
@@ -6,6 +6,7 @@ app.use( express.json() )
 import cors from 'cors';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
+import { handleStripeWebhook } from './webhooks';
 
 ///Middleware///
 
@@ -60,3 +61,8 @@ app.post(
        );
     })
 );
+
+/**
+ * Web Hooks
+ */
+app.post('/hooks', runAsync(handleStripeWebhook));
