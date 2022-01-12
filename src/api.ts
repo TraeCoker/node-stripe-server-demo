@@ -4,6 +4,7 @@ export const app = express();
 app.use( express.json() )
 
 import cors from 'cors';
+import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
 import { handleStripeWebhook } from './webhooks';
@@ -66,3 +67,15 @@ app.post(
  * Web Hooks
  */
 app.post('/hooks', runAsync(handleStripeWebhook));
+
+/**
+ * Decodes the JSON Web Token sent via the frontend app
+ * Makes the currentUser (firebase) data available on the body.
+ */
+
+async function decodeJWT(req: Request, res: Response, next: NextFunction) {
+    if (req.headers?.authorization?.startsWith('Bearer ')) {
+        const idToken = req.headers.authorization.split('Bearer ')[1];
+    }
+
+}
