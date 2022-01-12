@@ -51,7 +51,7 @@ function validateUser(req: Request) {
         );
     }
 
-    return user;
+    return user; 
 }
 
 /**
