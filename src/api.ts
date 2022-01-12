@@ -40,6 +40,19 @@ function runAsync(callback: Function){
     };
 };
 
+/**
+ * Throws and error if the currentUser does not exist on the request
+ */
+function validateUser(req: Request) {
+    const user = req['currentUser'];
+    if (!user) {
+        throw new Error(
+            'You must be logged in to make this request. i.e Authorization: Bearer <token>'
+        );
+    }
+
+    return user;
+}
 
 /**
  * Checkouts
