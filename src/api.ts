@@ -21,6 +21,9 @@ app.use(
     })
 );
 
+//Decodes the Firebase JSON WEB TOKEN
+app.use(decodeJWT);
+
 app.post('/test', (req: Request, resp: Response) =>{
         const amount = req.body.amount;
 
@@ -78,4 +81,10 @@ async function decodeJWT(req: Request, res: Response, next: NextFunction) {
         const idToken = req.headers.authorization.split('Bearer ')[1];
     }
 
+    try {
+        const decodedToken = await auth.verifyIdToken(idToken);
+        req['currentUser'] = decodedToken;
+    } catch(err) {
+        console.log(err)
+    }
 }
