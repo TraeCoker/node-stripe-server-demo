@@ -8,6 +8,7 @@ import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
 import { handleStripeWebhook } from './webhooks';
+import { createSetupIntent } from './customers';
 
 ///Middleware///
 
@@ -76,6 +77,20 @@ app.post(
        res.send(
             await createPaymentIntent(body.amount)
        );
+    })
+);
+
+/**
+ * Customers and Setup Intents
+ */
+
+//save a card on the customer record with setup intent
+app.post(
+    '/wallet',
+    runAsync(async (req: Request, res: Response) => {
+        const user = validateUser(req);
+        const setupIntent = await createSetupIntent(user.uid);
+        res.send(setupIntent);
     })
 );
 
