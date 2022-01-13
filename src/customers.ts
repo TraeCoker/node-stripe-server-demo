@@ -40,3 +40,17 @@ export async function createSetupIntent(userId: string) {
         customer: customer.id,
     })
 }
+
+/**
+ * Returns all payment sources associated to the user
+ */
+
+export async function listPaymentMethods(userId: string) {
+    const customer = await getOrCreateCustomer(userId);
+
+    return stripe.paymentMethods.list({
+        customer: customer.id,
+        type: 'card',
+    });
+    
+}
