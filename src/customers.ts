@@ -27,3 +27,16 @@ export async function getOrCreateCustomer() {
     }
 
 }
+
+/**
+ * Creates a setupIntent used to save a card for future use
+ */
+
+export async function createSetupIntent(userId: string) {
+
+    const customer = await getOrCreateCustomer(userId);
+    
+    return stripe.setupIntents.create({
+        customer: customer.id,
+    })
+}
