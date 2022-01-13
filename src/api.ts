@@ -8,7 +8,7 @@ import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
 import { handleStripeWebhook } from './webhooks';
-import { createSetupIntent } from './customers';
+import { createSetupIntent, listPaymentMethods } from './customers';
 
 ///Middleware///
 
@@ -93,6 +93,18 @@ app.post(
         res.send(setupIntent);
     })
 );
+
+//Retrieve all cards attached to a customer
+app.get(
+    '/wallet',
+    runAsync(async (req: Request, res: Response) => {
+        const user = validateUser(user.uid);
+
+        const wallet = await listPaymentMethods(user.uid);
+        res.send(wallet.data);
+    })
+);
+
 
 /**
  * Web Hooks
