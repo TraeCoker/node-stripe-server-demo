@@ -7,6 +7,7 @@ import cors from 'cors';
 import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
+import { createSubscription } from './billing';
 import { handleStripeWebhook } from './webhooks';
 import { createSetupIntent, listPaymentMethods } from './customers';
 
@@ -105,6 +106,20 @@ app.get(
     })
 );
 
+/**
+ * Billing and Recurring Subscriptions
+ */
+
+//Create and charge a new Subscription
+app.post(
+    '/subscriptions/',
+    runAsync(async (req: Request, res: Response) => {
+        const user = validateUser(req);
+        const { plan, payment_method } = req.body;
+        const subscription = await createSubscription(user.id, plan, payment_method);
+        res.send(subscription);
+    })
+)
 
 /**
  * Web Hooks

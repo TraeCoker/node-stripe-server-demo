@@ -32,7 +32,7 @@ export async function createSubscription(
     const invoice = subscription.latest_invoice as Stripe.Invoice;
     const payment_intent = invoice.payment_intent as Stripe.PaymentIntent;
 
-    //Update the user's status
+    //Update the user's status in db
     if (payment_intent.status === 'succeeded') {
         await db
             .collection('users')
