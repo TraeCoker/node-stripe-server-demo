@@ -14,7 +14,26 @@ const webHookHandlers = {
     'payment_intent.payment_failed': async(data: Stripe.PaymentIntent)=> {
         //add business logic here
     },
-    
+    'customer.subscription.created': async (data: Stripe.Subscription) => {
+        const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
+        const userId = customer.metadata.firebaseUID;
+        const userRef = db.collection('users').doc(userId);
+
+        await userRef
+            .update({
+                activePlans: firestore.FieldValue.arrayUnion(data.plan.id)
+            })
+    },
+    'customer.subscription.deleted': async (data: Stripe.Subscription) => {
+        const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
+        const userId = customer.metadata.firebaseUID;
+        const userRef = db.collection('users').doc(userId);
+
+        await userRef
+            .update({
+                activePlans: firestore.FieldValue.arrayRemove(data.plan.id)
+            })
+    },
     'invoice.payment_succeeded': async (data: Stripe.Invoice) => {
         //add business logic here
     },
