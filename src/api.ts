@@ -7,7 +7,7 @@ import cors from 'cors';
 import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
-import { createSubscription, listSubscriptions } from './billing';
+import { cancelSubscription, createSubscription, listSubscriptions } from './billing';
 import { handleStripeWebhook } from './webhooks';
 import { createSetupIntent, listPaymentMethods } from './customers';
 
@@ -131,7 +131,16 @@ app.get(
 
         res.send(subscriptions.data)
     })
-)
+);
+
+//Unsubscribe or cancel a subscription
+app.patch(
+    '/subscriptions/:id',
+    runAsync(async (req: Request, res: Response) => {
+        const user = validateUser(req);
+        res.send(await cancelSubscription(user.uid, req.params.id))
+    })
+);
 
 /**
  * Web Hooks
