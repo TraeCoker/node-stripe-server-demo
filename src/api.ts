@@ -128,3 +128,4 @@ async function decodeJWT(req: Request, res: Response, next: NextFunction) {
         console.log(err)
     }
 }
+
