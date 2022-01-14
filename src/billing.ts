@@ -80,3 +80,15 @@ export async function cancelSubscription(
 
     return subscription;
 }
+
+/**
+ * Returns all the subscriptions linked to a Firebase userID in Stripe
+ */
+export async function listSubscriptions(userId: string) {
+    const customer = await getOrCreateCustomer(userId);
+    const subscriptions = await stripe.subscriptions.list({
+        customer: customer.id,
+    });
+
+    return subscriptions;
+}
