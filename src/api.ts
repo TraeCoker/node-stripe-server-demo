@@ -7,7 +7,7 @@ import cors from 'cors';
 import { auth } from './firebase';
 import { createStripeChekoutSession } from './checkout';
 import { createPaymentIntent } from './payments';
-import { createSubscription } from './billing';
+import { createSubscription, listSubscriptions } from './billing';
 import { handleStripeWebhook } from './webhooks';
 import { createSetupIntent, listPaymentMethods } from './customers';
 
@@ -118,6 +118,18 @@ app.post(
         const { plan, payment_method } = req.body;
         const subscription = await createSubscription(user.id, plan, payment_method);
         res.send(subscription);
+    })
+);
+
+//Get all subscriptions for a customer
+app.get(
+    '/subscriptions/', 
+    runAsync(async (req: Request, res: Response) => {
+        const user = validateUser(req);
+
+        const subscriptions = await listSubscriptions(user.id);
+
+        res.send(subscriptions.data)
     })
 )
 
