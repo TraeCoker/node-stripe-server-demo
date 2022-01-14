@@ -1,5 +1,7 @@
 import { stripe } from "./";
 import Stripe from "stripe";
+import { db } from './firebase';
+import { firestore } from "firebase-admin";
 
 /**
  * Business logic for specific webhook event types
@@ -12,6 +14,15 @@ const webHookHandlers = {
     'payment_intent.payment_failed': async(data: Stripe.PaymentIntent)=> {
         //add business logic here
     },
+    
+    'invoice.payment_succeeded': async (data: Stripe.Invoice) => {
+        //add business logic here
+    },
+    'invoice.payment_failed': async (data: Stripe.Invoice) => {
+        const customer = await stripe.customers.retrieve( data.customer as string) as Stripe.Customer;
+        const userSnapshot = await db.collection('users').doc(customer.metadata.firbaseUID).get();
+        await userSnapshot.ref.update({ status: 'PAST_DUE' });
+    }
 }
 
 /**
