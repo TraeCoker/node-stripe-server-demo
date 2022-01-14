@@ -48,3 +48,35 @@ export async function createSubscription(
 
     return subscription; 
 }
+
+/**
+ * Cancels an active subscription, syncs the data in Firestore
+ */
+
+export async function cancelSubscription(
+    userId: string,
+    subscriptionId: string
+) {
+    const customer = await getOrCreateCustomer(userId);
+    if(customer.metadata.firebaseUID !== userId) {
+        throw Error('Firebase UId does not match Stripe Customer');
+    }
+    
+    //Cancel subscription immediately 
+    const subscription = await stripe.subscriptions.del(subscriptionId);
+
+    //Cancel at end of period
+    //use webhook to listen for cancellation and update db at that time
+    //const subscription = stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: true });
+
+    if (subscription.status === 'canceled') {
+        await db
+            .collection('users')
+            .doc(userId)
+            .update({
+                activePlans: firestore.FieldValue.arrayRemove(subscription.plan.id),
+            });
+    }
+
+    return subscription;
+}
