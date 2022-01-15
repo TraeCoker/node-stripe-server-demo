@@ -99,7 +99,7 @@ app.post(
 app.get(
     '/wallet',
     runAsync(async (req: Request, res: Response) => {
-        const user = validateUser(user.uid);
+        const user = validateUser(req);
 
         const wallet = await listPaymentMethods(user.uid);
         res.send(wallet.data);
@@ -155,13 +155,13 @@ app.post('/hooks', runAsync(handleStripeWebhook));
 async function decodeJWT(req: Request, res: Response, next: NextFunction) {
     if (req.headers?.authorization?.startsWith('Bearer ')) {
         const idToken = req.headers.authorization.split('Bearer ')[1];
-    }
 
-    try {
-        const decodedToken = await auth.verifyIdToken(idToken);
-        req['currentUser'] = decodedToken;
-    } catch(err) {
-        console.log(err)
-    }
+        try {
+            const decodedToken = await auth.verifyIdToken(idToken);
+            req['currentUser'] = decodedToken;
+        } catch(err) {
+            console.log(err)
+        }
+    }   
 }
 
