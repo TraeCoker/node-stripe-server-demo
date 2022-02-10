@@ -14,6 +14,9 @@ export async function createSubscription(
     payment_method: string,
 ) {
     const customer = await getOrCreateCustomer(userId);
+    console.log(userId)
+    console.log(plan)
+    console.log(payment_method)
 
     //Attach the payment method to the customer
     await stripe.paymentMethods.attach(payment_method, { customer: customer.id });
@@ -74,7 +77,7 @@ export async function cancelSubscription(
             .collection('users')
             .doc(userId)
             .update({
-                activePlans: firestore.FieldValue.arrayRemove(subscription.plan.id),
+                activePlans: firestore.FieldValue.arrayRemove(subscription.id),
             });
     }
 
@@ -86,6 +89,7 @@ export async function cancelSubscription(
  */
 export async function listSubscriptions(userId: string) {
     const customer = await getOrCreateCustomer(userId);
+    
     const subscriptions = await stripe.subscriptions.list({
         customer: customer.id,
     });

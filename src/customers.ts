@@ -7,7 +7,7 @@ import Stripe from "stripe";
  */
 export async function getOrCreateCustomer(userId: string, params?: Stripe.CustomerCreateParams) {
     const userSnapshot = await db.collection('users').doc(userId).get();
-
+    console.log(userSnapshot)
     const { stripeCustomerId, email } = userSnapshot.data();
 
     //if missing CustomerID, create it

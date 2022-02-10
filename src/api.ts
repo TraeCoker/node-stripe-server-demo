@@ -126,9 +126,9 @@ app.get(
     '/subscriptions/', 
     runAsync(async (req: Request, res: Response) => {
         const user = validateUser(req);
-
+        
         const subscriptions = await listSubscriptions(user.id);
-
+        console.log(subscriptions)
         res.send(subscriptions.data)
     })
 );
@@ -153,9 +153,10 @@ app.post('/hooks', runAsync(handleStripeWebhook));
  */
 
 async function decodeJWT(req: Request, res: Response, next: NextFunction) {
+    console.log(req)
     if (req.headers?.authorization?.startsWith('Bearer ')) {
-        const idToken = req.headers.authorization.split('Bearer ')[1];
-
+        const idToken = req.headers.authorization.split("Bearer ")[1];
+       
         try {
             const decodedToken = await auth.verifyIdToken(idToken);
             req['currentUser'] = decodedToken;
@@ -163,5 +164,7 @@ async function decodeJWT(req: Request, res: Response, next: NextFunction) {
             console.log(err)
         }
     }   
+
+    next();
 }
 
