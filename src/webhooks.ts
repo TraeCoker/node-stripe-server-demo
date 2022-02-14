@@ -1,7 +1,7 @@
 import { stripe } from "./";
 import Stripe from "stripe";
 import { db } from './firebase';
-import { firestore } from "firebase-admin";
+
 
 /**
  * Business logic for specific webhook event types
@@ -14,26 +14,28 @@ const webHookHandlers = {
     'payment_intent.payment_failed': async(data: Stripe.PaymentIntent)=> {
         //add business logic here
     },
-    'customer.subscription.created': async (data: Stripe.Subscription) => {
-        const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
-        const userId = customer.metadata.firebaseUID;
-        const userRef = db.collection('users').doc(userId);
+    // Webhooks for subscriptions implemented via firebase extension. Code is kept for reference
+    //
+    // 'customer.subscription.created': async (data: Stripe.Subscription) => {
+    //     const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
+    //     const userId = customer.metadata.firebaseUID;
+    //     const userRef = db.collection('users').doc(userId);
 
-        await userRef
-            .update({
-                activePlans: firestore.FieldValue.arrayUnion(data.plan.id)
-            })
-    },
-    'customer.subscription.deleted': async (data: Stripe.Subscription) => {
-        const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
-        const userId = customer.metadata.firebaseUID;
-        const userRef = db.collection('users').doc(userId);
+    //     await userRef
+    //         .update({
+    //             activePlans: firestore.FieldValue.arrayUnion(data.plan.id)
+    //         })
+    // },
+    // 'customer.subscription.deleted': async (data: Stripe.Subscription) => {
+    //     const customer = await stripe.customers.retrieve( data.customer as string ) as Stripe.Customer;
+    //     const userId = customer.metadata.firebaseUID;
+    //     const userRef = db.collection('users').doc(userId);
 
-        await userRef
-            .update({
-                activePlans: firestore.FieldValue.arrayRemove(data.plan.id)
-            })
-    },
+    //     await userRef
+    //         .update({
+    //             activePlans: firestore.FieldValue.arrayRemove(data.plan.id)
+    //         })
+    // },
     'invoice.payment_succeeded': async (data: Stripe.Invoice) => {
         //add business logic here
     },
@@ -55,7 +57,6 @@ export const handleStripeWebhook = async(req, res) => {
         await webHookHandlers[event.type](event.data.object);
         res.send({recieved: true})
     } catch (error) {
-        console.log(error)
-        res.status(400).send(`Webhook Error: ${error.message}`)
+        res.status(400).send(`Webhook Error: ${error}`)
     }
 }
