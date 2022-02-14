@@ -128,7 +128,6 @@ app.get(
         const user = validateUser(req);
         
         const subscriptions = await listSubscriptions(user.id);
-        console.log(subscriptions)
         res.send(subscriptions.data)
     })
 );

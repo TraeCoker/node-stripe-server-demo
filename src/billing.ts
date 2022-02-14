@@ -14,9 +14,6 @@ export async function createSubscription(
     payment_method: string,
 ) {
     const customer = await getOrCreateCustomer(userId);
-    console.log(userId)
-    console.log(plan)
-    console.log(payment_method)
 
     //Attach the payment method to the customer
     await stripe.paymentMethods.attach(payment_method, { customer: customer.id });
