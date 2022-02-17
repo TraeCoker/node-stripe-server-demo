@@ -127,7 +127,7 @@ app.get(
     runAsync(async (req: Request, res: Response) => {
         const user = validateUser(req);
         
-        const subscriptions = await listSubscriptions(user.id);
+        const subscriptions = await listSubscriptions(user.uid);
         res.send(subscriptions.data)
     })
 );

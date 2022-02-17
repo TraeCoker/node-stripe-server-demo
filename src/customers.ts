@@ -6,12 +6,12 @@ import Stripe from "stripe";
  * Gets the existing Stripe customer or creates a new record
  */
 export async function getOrCreateCustomer(userId: string, params?: Stripe.CustomerCreateParams) {
-    const userSnapshot = await db.collection('users').doc(userId).get();
-    console.log(userSnapshot)
-    const { stripeCustomerId, email } = userSnapshot.data();
+    const userSnapshot = await db.collection('users').doc('' + userId).get();
+    console.warn(userSnapshot)
+    const { stripeId, email } = userSnapshot.data();
 
     //if missing CustomerID, create it
-    if (!stripeCustomerId) {
+    if (!stripeId) {
         //CREATE a new customer
         const customer = await stripe.customers.create({
             email,
@@ -20,10 +20,10 @@ export async function getOrCreateCustomer(userId: string, params?: Stripe.Custom
             },
             ...params
         });
-        await userSnapshot.ref.update({ stripeCustomerId: customer.id });
+        await userSnapshot.ref.update({ stripeId: customer.id });
         return customer;
     } else {
-        return await stripe.customers.retrieve(stripeCustomerId) as Stripe.Customer;
+        return await stripe.customers.retrieve(stripeId) as Stripe.Customer;
     }
 
 }
