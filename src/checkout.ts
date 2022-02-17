@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 export async function  createStripeChekoutSession(
     line_items: Stripe.Checkout.SessionCreateParams.LineItem[]
 ) {
-   const url = 'https://the-source.netlify.app/'//'http://localhost:3001';
+   const url = 'https://the-source.netlify.app'//'http://localhost:3001';
    
    const session = await stripe.checkout.sessions.create({
        payment_method_types: ['card'],
